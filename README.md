@@ -40,4 +40,4 @@ linux-usage.tcp-listen.drops    0       1672116689
 
 ## Install
 
-Please download release page or `mkr plugin install kazeburo/mackerel-plugin-linux-usage`.
+Please download release page or `mkr plugin install monitoring-forge/mackerel-plugin-linux-usage`.
