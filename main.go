@@ -16,10 +16,10 @@ import (
 	"github.com/prometheus/procfs"
 )
 
-// version by Makefile
 var version string
+var commit string
 
-type cmdOpts struct {
+type Opt struct {
 	Version bool `short:"v" long:"version" description:"Show version"`
 }
 
@@ -302,19 +302,22 @@ func main() {
 	os.Exit(_main())
 }
 
-var opts = cmdOpts{}
-
 func _main() int {
-	psr := flags.NewParser(&opts, flags.HelpFlag|flags.PassDoubleDash)
+	opt := &Opt{}
+	psr := flags.NewParser(opt, flags.HelpFlag|flags.PassDoubleDash)
 	_, err := psr.Parse()
-	if opts.Version {
-		fmt.Printf(`%s %s
-Compiler: %s %s
-`,
-			os.Args[0],
+	if opt.Version {
+		if commit == "" {
+			commit = "dev"
+		}
+		fmt.Printf(
+			"%s-%s\n%s/%s, %s, %s\n",
+			filepath.Base(os.Args[0]),
 			version,
-			runtime.Compiler,
-			runtime.Version())
+			runtime.GOOS,
+			runtime.GOARCH,
+			runtime.Version(),
+			commit)
 		return 0
 	}
 	if err != nil {
