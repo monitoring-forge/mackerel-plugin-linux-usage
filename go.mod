@@ -1,6 +1,6 @@
-module github.com/kazeburo/mackerel-plugin-linux-usage
+module github.com/monitoring-forge/mackerel-plugin-linux-usage
 
-go 1.18
+go 1.25
 
 require (
 	github.com/jessevdk/go-flags v1.5.0
