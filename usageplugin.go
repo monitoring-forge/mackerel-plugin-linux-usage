@@ -89,18 +89,6 @@ func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error)
 	if err != nil {
 		return res, err
 	}
-	selffs, err := pf.Self()
-	if err != nil {
-		return res, err
-	}
-	psnmp, err := selffs.Snmp()
-	if err != nil {
-		return res, err
-	}
-	pnetstat, err := selffs.Netstat()
-	if err != nil {
-		return res, err
-	}
 
 	totalProcs := float64(0)
 	procRunning := float64(0)
@@ -125,6 +113,24 @@ func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error)
 	res["loadavg15"] = loadavg.Load15 / cores
 	res["all"] = totalProcs
 	res["running"] = procRunning
+
+	return res, nil
+}
+
+func (u LinuxUsagePlugin) gaugeNetMetrics(pf procfs.FS) (map[string]float64, error) {
+	res := map[string]float64{}
+	selffs, err := pf.Self()
+	if err != nil {
+		return res, err
+	}
+	psnmp, err := selffs.Snmp()
+	if err != nil {
+		return res, err
+	}
+	pnetstat, err := selffs.Netstat()
+	if err != nil {
+		return res, err
+	}
 	if psnmp.Tcp.ActiveOpens != nil {
 		res["active"] = *psnmp.Tcp.ActiveOpens
 	}
@@ -137,7 +143,6 @@ func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error)
 	if pnetstat.ListenDrops != nil {
 		res["drops"] = *pnetstat.ListenDrops
 	}
-
 	return res, nil
 }
 
@@ -251,11 +256,17 @@ func (u LinuxUsagePlugin) FetchMetrics() (map[string]float64, error) {
 		return nil, err
 	}
 
+	net, err := u.gaugeNetMetrics(pf)
+	if err != nil {
+		return nil, err
+	}
+
 	cpu, err := u.cpuMetrics(pf)
 	if err != nil {
 		return nil, err
 	}
 
+	maps.Copy(res, net)
 	maps.Copy(res, cpu)
 	return res, nil
 

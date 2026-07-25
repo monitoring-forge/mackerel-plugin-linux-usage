@@ -94,6 +94,9 @@ type expectedMetric struct {
 }
 
 func testResponseExpected(t *testing.T, res map[string]float64, expected []expectedMetric) {
+	if len(res) != len(expected) {
+		t.Errorf("Expected %d metrics, got %d", len(expected), len(res))
+	}
 	for _, exp := range expected {
 		if val, ok := res[exp.key]; !ok {
 			t.Errorf("Expected key %s not found in result", exp.key)
@@ -139,12 +142,34 @@ func TestGaugeMetrics(t *testing.T) {
 		{"loadavg15", 0.02},
 		{"all", 2},
 		{"running", 1},
+	}
+	testResponseExpected(t, res, expected)
+}
+
+func TestGaugeNetMetrics(t *testing.T) {
+	tmpDir := t.TempDir()
+	procDir := filepath.Join(tmpDir, "proc")
+	buildProcfsTree(t, procDir)
+	plugin := LinuxUsagePlugin{
+		workDir: tmpDir,
+	}
+	// Create a procfs.FS instance pointing to the temporary procfs directory
+	pf, err := procfs.NewFS(procDir)
+	if err != nil {
+		t.Fatalf("Failed to create procfs FS: %v", err)
+	}
+	res, err := plugin.gaugeNetMetrics(pf)
+	if err != nil {
+		t.Fatalf("gaugeNetMetrics failed: %v", err)
+	}
+	expected := []expectedMetric{
 		{"active", 128974},
 		{"passive", 4576939},
 		{"overflows", 0},
 		{"drops", 376},
 	}
 	testResponseExpected(t, res, expected)
+
 }
 
 // Test cpuMetrics
