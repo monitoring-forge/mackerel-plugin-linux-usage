@@ -220,17 +220,17 @@ func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 	gapGuestNice := minZero(float64(curCPU.GuestNice) - float64(prevCPU.GuestNice))
 	total += gapGuestNice
 
+	// User includes Guest
+	gapUser = minZero(gapUser - gapGuest)
+	total -= gapGuest
+	// Nice includes GuestNice
+	gapNice = minZero(gapNice - gapGuestNice)
+	total -= gapGuestNice
+
 	if total == 0 {
 		fmt.Fprintf(os.Stderr, "Notice: System CPU counter seems to be unchanged\n")
 		return res, nil
 	}
-
-	// User includes Guest
-	gapUser -= gapGuest
-	total -= gapGuest
-	// Nice includes GuestNice
-	gapNice -= gapGuestNice
-	total -= gapGuestNice
 
 	res["user"] = gapUser * 100 / total
 	res["nice"] = gapNice * 100 / total
