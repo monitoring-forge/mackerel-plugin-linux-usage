@@ -227,7 +227,7 @@ func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 	gapNice = minZero(gapNice - gapGuestNice)
 	total -= gapGuestNice
 
-	if total == 0 {
+	if total <= 0 {
 		fmt.Fprintf(os.Stderr, "Notice: System CPU counter seems to be unchanged\n")
 		return res, nil
 	}
