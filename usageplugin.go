@@ -10,6 +10,8 @@ import (
 	"github.com/prometheus/procfs"
 )
 
+var tooOldDuration = 600.0 // seconds
+
 type LinuxUsagePlugin struct {
 	workDir string
 }
@@ -167,7 +169,7 @@ func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 	}
 	now := time.Now().Unix()
 	timeDiff := float64(now - prevTime)
-	if timeDiff > 600 {
+	if timeDiff > tooOldDuration {
 		return res, fmt.Errorf("too long duration")
 	}
 
