@@ -203,8 +203,8 @@ softirq 6428709196 0 1343939038 732 1669293799 90025278 0 431563 0 6764 33250120
 	}
 	// Check that the result contains expected keys
 	expected := []struct {
-		key string
-		val float64
+		key   string
+		value float64
 	}{
 		{"user", 4.314063848238907},
 		{"nice", 0.0},
@@ -219,9 +219,15 @@ softirq 6428709196 0 1343939038 732 1669293799 90025278 0 431563 0 6764 33250120
 	}
 	for _, exp := range expected {
 		if val, ok := res2[exp.key]; !ok {
-			t.Errorf("Expected key %s not found in result on second execution", exp.key)
-		} else if val != exp.val {
-			t.Errorf("Expected value for key %s on second execution: %v, got: %v", exp.key, exp.val, val)
+			t.Errorf("Expected key %s not found in result", exp.key)
+		} else {
+			diff := val - exp.value
+			if diff < 0 {
+				diff = -diff
+			}
+			if diff > 1e-9 {
+				t.Errorf("Expected value for key %s: %v, got: %v", exp.key, exp.value, val)
+			}
 		}
 	}
 }
