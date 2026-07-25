@@ -88,6 +88,27 @@ MPTcpExt: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
 	}
 }
 
+type expectedMetric struct {
+	key   string
+	value float64
+}
+
+func testResponseExpected(t *testing.T, res map[string]float64, expected []expectedMetric) {
+	for _, exp := range expected {
+		if val, ok := res[exp.key]; !ok {
+			t.Errorf("Expected key %s not found in result", exp.key)
+		} else {
+			diff := val - exp.value
+			if diff < 0 {
+				diff = -diff
+			}
+			if diff > 1e-9 {
+				t.Errorf("Expected value for key %s: %v, got: %v", exp.key, exp.value, val)
+			}
+		}
+	}
+}
+
 // Test gaugeMetrics
 func TestGaugeMetrics(t *testing.T) {
 	tmpDir := t.TempDir()
@@ -112,10 +133,7 @@ func TestGaugeMetrics(t *testing.T) {
 	}
 
 	// Check that the result contains expected keys
-	expected := []struct {
-		key   string
-		value float64
-	}{
+	expected := []expectedMetric{
 		{"loadavg1", 0.13},
 		{"loadavg5", 0.06},
 		{"loadavg15", 0.02},
@@ -126,19 +144,7 @@ func TestGaugeMetrics(t *testing.T) {
 		{"overflows", 0},
 		{"drops", 376},
 	}
-	for _, exp := range expected {
-		if val, ok := res[exp.key]; !ok {
-			t.Errorf("Expected key %s not found in result", exp.key)
-		} else {
-			diff := val - exp.value
-			if diff < 0 {
-				diff = -diff
-			}
-			if diff > 1e-9 {
-				t.Errorf("Expected value for key %s: %v, got: %v", exp.key, exp.value, val)
-			}
-		}
-	}
+	testResponseExpected(t, res, expected)
 }
 
 // Test cpuMetrics
@@ -202,10 +208,7 @@ softirq 6428709196 0 1343939038 732 1669293799 90025278 0 431563 0 6764 33250120
 		t.Fatalf("cpuMetrics failed on second execution: %v", err)
 	}
 	// Check that the result contains expected keys
-	expected := []struct {
-		key   string
-		value float64
-	}{
+	expected := []expectedMetric{
 		{"user", 4.314063848238907},
 		{"nice", 0.0},
 		{"system", 4.685737041316406},
@@ -217,17 +220,5 @@ softirq 6428709196 0 1343939038 732 1669293799 90025278 0 431563 0 6764 33250120
 		{"guest", 0},
 		{"guest_nice", 0},
 	}
-	for _, exp := range expected {
-		if val, ok := res2[exp.key]; !ok {
-			t.Errorf("Expected key %s not found in result", exp.key)
-		} else {
-			diff := val - exp.value
-			if diff < 0 {
-				diff = -diff
-			}
-			if diff > 1e-9 {
-				t.Errorf("Expected value for key %s: %v, got: %v", exp.key, exp.value, val)
-			}
-		}
-	}
+	testResponseExpected(t, res2, expected)
 }

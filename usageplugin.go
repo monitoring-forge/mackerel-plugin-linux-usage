@@ -141,6 +141,13 @@ func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error)
 	return res, nil
 }
 
+func minZero(a float64) float64 {
+	if a < 0 {
+		return 0
+	}
+	return a
+}
+
 func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 	res := map[string]float64{}
 
@@ -178,64 +185,34 @@ func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 
 	var total float64
 	// User
-	gapUser := float64(curCPU.User) - float64(prevCPU.User)
-	if gapUser < 0 {
-		gapUser = 0
-	}
+	gapUser := minZero(float64(curCPU.User) - float64(prevCPU.User))
 	total += gapUser
 	// Nice
-	gapNice := float64(curCPU.Nice) - float64(prevCPU.Nice)
-	if gapNice < 0 {
-		gapNice = 0
-	}
+	gapNice := minZero(float64(curCPU.Nice) - float64(prevCPU.Nice))
 	total += gapNice
 	// System
-	gapSystem := float64(curCPU.System) - float64(prevCPU.System)
-	if gapSystem < 0 {
-		gapSystem = 0
-	}
+	gapSystem := minZero(float64(curCPU.System) - float64(prevCPU.System))
 	total += gapSystem
 	// Idle
-	gapIdle := float64(curCPU.Idle) - float64(prevCPU.Idle)
-	if gapIdle < 0 {
-		gapIdle = 0
-	}
+	gapIdle := minZero(float64(curCPU.Idle) - float64(prevCPU.Idle))
 	total += gapIdle
 	// Iowait
-	gapIowait := float64(curCPU.Iowait) - float64(prevCPU.Iowait)
-	if gapIowait < 0 {
-		gapIowait = 0
-	}
+	gapIowait := minZero(float64(curCPU.Iowait) - float64(prevCPU.Iowait))
 	total += gapIowait
 	// Irq
-	gapIRQ := float64(curCPU.IRQ) - float64(prevCPU.IRQ)
-	if gapIRQ < 0 {
-		gapIRQ = 0
-	}
+	gapIRQ := minZero(float64(curCPU.IRQ) - float64(prevCPU.IRQ))
 	total += gapIRQ
 	// SoftIRQ
-	gapSoftIRQ := float64(curCPU.SoftIRQ) - float64(prevCPU.SoftIRQ)
-	if gapSoftIRQ < 0 {
-		gapSoftIRQ = 0
-	}
+	gapSoftIRQ := minZero(float64(curCPU.SoftIRQ) - float64(prevCPU.SoftIRQ))
 	total += gapSoftIRQ
 	// Steal
-	gapSteal := float64(curCPU.Steal) - float64(prevCPU.Steal)
-	if gapSteal < 0 {
-		gapSteal = 0
-	}
+	gapSteal := minZero(float64(curCPU.Steal) - float64(prevCPU.Steal))
 	total += gapSteal
 	// Guest
-	gapGuest := float64(curCPU.Guest) - float64(prevCPU.Guest)
-	if gapGuest < 0 {
-		gapGuest = 0
-	}
+	gapGuest := minZero(float64(curCPU.Guest) - float64(prevCPU.Guest))
 	total += gapGuest
 	// GuestNice
-	gapGuestNice := float64(curCPU.GuestNice) - float64(prevCPU.GuestNice)
-	if gapGuestNice < 0 {
-		gapGuestNice = 0
-	}
+	gapGuestNice := minZero(float64(curCPU.GuestNice) - float64(prevCPU.GuestNice))
 	total += gapGuestNice
 
 	if total == 0 {
