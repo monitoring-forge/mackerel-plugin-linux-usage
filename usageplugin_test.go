@@ -129,8 +129,14 @@ func TestGaugeMetrics(t *testing.T) {
 	for _, exp := range expected {
 		if val, ok := res[exp.key]; !ok {
 			t.Errorf("Expected key %s not found in result", exp.key)
-		} else if val != exp.value {
-			t.Errorf("Expected value for key %s: %v, got: %v", exp.key, exp.value, val)
+		} else {
+			diff := val - exp.value
+			if diff < 0 {
+				diff = -diff
+			}
+			if diff > 1e-9 {
+				t.Errorf("Expected value for key %s: %v, got: %v", exp.key, exp.value, val)
+			}
 		}
 	}
 }

@@ -39,7 +39,11 @@ func writeStats(dir, filename string, st procfs.CPUStat) error {
 		return err
 	}
 
-	return os.Rename(newFile.Name(), filepath.Join(dir, filename))
+	if err := os.Rename(newFile.Name(), filepath.Join(dir, filename)); err != nil {
+		_ = os.Remove(newFile.Name())
+		return err
+	}
+	return nil
 }
 
 func readStats(dir, filename string) (int64, procfs.CPUStat, error) {

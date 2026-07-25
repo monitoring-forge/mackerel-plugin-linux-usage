@@ -116,6 +116,9 @@ func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error)
 	}
 
 	cores := float64(len(st.CPU))
+	if cores == 0 {
+		cores = 1
+	}
 
 	res["loadavg1"] = loadavg.Load1 / cores
 	res["loadavg5"] = loadavg.Load5 / cores
