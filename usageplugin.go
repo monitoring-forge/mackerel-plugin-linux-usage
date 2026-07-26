@@ -147,10 +147,7 @@ func (u LinuxUsagePlugin) gaugeNetMetrics(pf procfs.FS) (map[string]float64, err
 }
 
 func minZero(a float64) float64 {
-	if a < 0 {
-		return 0
-	}
-	return a
+	return max(a, 0)
 }
 
 func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
