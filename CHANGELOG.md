@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.2](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.1...v0.1.2) - 2026-07-26
+
+- use max by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/8
+
 ## [v0.1.1](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.0...v0.1.1) - 2026-07-25
 
 - repository transfer and improve CI/CD by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/2
