@@ -14,6 +14,13 @@ import (
 var version string
 var commit string
 
+const (
+	OK = iota
+	WARNING
+	CRITICAL
+	UNKNOWN
+)
+
 type Opt struct {
 	Version bool `short:"v" long:"version" description:"Show version"`
 }
@@ -38,11 +45,13 @@ func _main() int {
 			runtime.GOARCH,
 			runtime.Version(),
 			commit)
-		return 0
-	}
-	if err != nil {
+		return OK
+	} else if flags.WroteHelp(err) {
+		fmt.Fprintf(os.Stdout, "%v\n", err)
+		return OK
+	} else if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return 1
+		return UNKNOWN
 	}
 
 	tmpDir := pluginutil.PluginWorkDir()
@@ -51,5 +60,5 @@ func _main() int {
 	}
 	plugin := mp.NewMackerelPlugin(u)
 	plugin.Run()
-	return 0
+	return OK
 }
