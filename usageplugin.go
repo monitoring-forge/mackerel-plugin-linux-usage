@@ -131,11 +131,12 @@ func (u LinuxUsagePlugin) gaugeNetMetrics(pf procfs.FS) (map[string]float64, err
 	if err != nil {
 		return res, err
 	}
-	if psnmp.Tcp.ActiveOpens != nil {
-		res["active"] = *psnmp.Tcp.ActiveOpens
+	tcp := psnmp.Tcp
+	if tcp.ActiveOpens != nil {
+		res["active"] = *tcp.ActiveOpens
 	}
-	if psnmp.Tcp.PassiveOpens != nil {
-		res["passive"] = *psnmp.Tcp.PassiveOpens
+	if tcp.PassiveOpens != nil {
+		res["passive"] = *tcp.PassiveOpens
 	}
 	if pnetstat.ListenOverflows != nil {
 		res["overflows"] = *pnetstat.ListenOverflows

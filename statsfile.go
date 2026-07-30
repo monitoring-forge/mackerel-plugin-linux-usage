@@ -29,13 +29,13 @@ func writeStats(dir, filename string, st procfs.CPUStat) error {
 	err = je.Encode(stats{st, n})
 	if err != nil {
 		newFile.Close()
-		os.Remove(newFile.Name())
+		_ = os.Remove(newFile.Name())
 		return err
 	}
 
 	err = newFile.Close()
 	if err != nil {
-		os.Remove(newFile.Name())
+		_ = os.Remove(newFile.Name())
 		return err
 	}
 
