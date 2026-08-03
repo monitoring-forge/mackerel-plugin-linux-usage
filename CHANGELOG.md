@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.1.3](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.2...v0.1.3) - 2026-08-03
+
+- add lint and fix some issue by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/11
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/13
+
 ## [v0.1.2](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.1...v0.1.2) - 2026-07-26
 
 - use max by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/8
