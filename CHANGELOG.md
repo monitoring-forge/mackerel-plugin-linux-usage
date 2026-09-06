@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.1.3](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.2...v0.1.3) - 2026-09-06
+
+- add lint and fix some issue by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/11
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/13
+- go: bump golang.org/x/text from 0.40.0 to 0.41.0 in the dependencies group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/16
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/14
+- go: bump github.com/prometheus/procfs from 0.21.1 to 0.22.0 in the dependencies group across 1 directory by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/17
+- ci: bump Songmu/tagpr from 1.20.1 to 1.20.2 in the dependencies group across 1 directory by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/19
+
 ## [v0.1.2](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.1...v0.1.2) - 2026-07-26
 
 - use max by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/8
