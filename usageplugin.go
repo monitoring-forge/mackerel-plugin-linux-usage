@@ -144,8 +144,8 @@ func (o *Opt) gaugeNetMetrics(pf procfs.FS) (map[string]float64, error) {
 	return res, nil
 }
 
-func minZero(a float64) float64 {
-	return max(a, 0)
+func gapMinZero(a float64, b float64) float64 {
+	return max(a-b, 0)
 }
 
 func (o *Opt) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
@@ -185,41 +185,41 @@ func (o *Opt) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 
 	var total float64
 	// User
-	gapUser := minZero(float64(curCPU.User) - float64(prevCPU.User))
+	gapUser := gapMinZero(curCPU.User, prevCPU.User)
 	total += gapUser
 	// Nice
-	gapNice := minZero(float64(curCPU.Nice) - float64(prevCPU.Nice))
+	gapNice := gapMinZero(curCPU.Nice, prevCPU.Nice)
 	total += gapNice
 	// System
-	gapSystem := minZero(float64(curCPU.System) - float64(prevCPU.System))
+	gapSystem := gapMinZero(curCPU.System, prevCPU.System)
 	total += gapSystem
 	// Idle
-	gapIdle := minZero(float64(curCPU.Idle) - float64(prevCPU.Idle))
+	gapIdle := gapMinZero(curCPU.Idle, prevCPU.Idle)
 	total += gapIdle
 	// Iowait
-	gapIowait := minZero(float64(curCPU.Iowait) - float64(prevCPU.Iowait))
+	gapIowait := gapMinZero(curCPU.Iowait, prevCPU.Iowait)
 	total += gapIowait
 	// Irq
-	gapIRQ := minZero(float64(curCPU.IRQ) - float64(prevCPU.IRQ))
+	gapIRQ := gapMinZero(curCPU.IRQ, prevCPU.IRQ)
 	total += gapIRQ
 	// SoftIRQ
-	gapSoftIRQ := minZero(float64(curCPU.SoftIRQ) - float64(prevCPU.SoftIRQ))
+	gapSoftIRQ := gapMinZero(curCPU.SoftIRQ, prevCPU.SoftIRQ)
 	total += gapSoftIRQ
 	// Steal
-	gapSteal := minZero(float64(curCPU.Steal) - float64(prevCPU.Steal))
+	gapSteal := gapMinZero(curCPU.Steal, prevCPU.Steal)
 	total += gapSteal
 	// Guest
-	gapGuest := minZero(float64(curCPU.Guest) - float64(prevCPU.Guest))
+	gapGuest := gapMinZero(curCPU.Guest, prevCPU.Guest)
 	total += gapGuest
 	// GuestNice
-	gapGuestNice := minZero(float64(curCPU.GuestNice) - float64(prevCPU.GuestNice))
+	gapGuestNice := gapMinZero(curCPU.GuestNice, prevCPU.GuestNice)
 	total += gapGuestNice
 
 	// User includes Guest
-	gapUser = minZero(gapUser - gapGuest)
+	gapUser = gapMinZero(gapUser, gapGuest)
 	total -= gapGuest
 	// Nice includes GuestNice
-	gapNice = minZero(gapNice - gapGuestNice)
+	gapNice = gapMinZero(gapNice, gapGuestNice)
 	total -= gapGuestNice
 
 	if total <= 0 {
