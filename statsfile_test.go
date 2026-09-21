@@ -9,26 +9,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/monitoring-forge/saferio"
 	"github.com/prometheus/procfs"
 )
-
-func TestFileExists(t *testing.T) {
-	tmpDir := t.TempDir()
-
-	// Test non-existent file
-	if fileExists(tmpDir, "nonexistent.txt") {
-		t.Error("fileExists should return false for non-existent file")
-	}
-
-	// Test existing file
-	existFile := filepath.Join(tmpDir, "exists.txt")
-	if err := os.WriteFile(existFile, []byte("test"), 0644); err != nil {
-		t.Fatalf("failed to create test file: %v", err)
-	}
-	if !fileExists(tmpDir, "exists.txt") {
-		t.Error("fileExists should return true for existing file")
-	}
-}
 
 func TestWriteStats(t *testing.T) {
 	tmpDir := t.TempDir()
@@ -53,7 +36,7 @@ func TestWriteStats(t *testing.T) {
 	}
 
 	// Verify file exists
-	if !fileExists(tmpDir, filename) {
+	if !saferio.FileExists(tmpDir, filename) {
 		t.Error("writeStats should create the target file")
 	}
 
@@ -199,5 +182,49 @@ func TestCorruptedStatsFile(t *testing.T) {
 	_, _, err := readStats(tmpDir, filename)
 	if err == nil {
 		t.Error("readStats should return an error for corrupted file content")
+	}
+}
+
+func TestReadStatsLegacyFormat(t *testing.T) {
+	dir := t.TempDir()
+	// State written before the saferio migration must remain readable.
+	data := []byte(`{"cpustat":{"User":100,"Idle":900},"time":1234567890}`)
+	if err := os.WriteFile(filepath.Join(dir, "legacy.json"), data, 0600); err != nil {
+		t.Fatal(err)
+	}
+	timestamp, cpu, err := readStats(dir, "legacy.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if timestamp != 1234567890 || cpu.User != 100 || cpu.Idle != 900 {
+		t.Fatalf("unexpected legacy state: time=%d cpu=%+v", timestamp, cpu)
+	}
+}
+
+func TestStatsSymlink(t *testing.T) {
+	dir := t.TempDir()
+	target := filepath.Join(dir, "target.json")
+	original := []byte(`{"cpustat":{"User":100},"time":1234567890}`)
+	if err := os.WriteFile(target, original, 0600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(target, filepath.Join(dir, "state.json")); err != nil {
+		t.Fatal(err)
+	}
+	if _, _, err := readStats(dir, "state.json"); err == nil {
+		t.Fatal("readStats must reject symlinks")
+	}
+	if err := writeStats(dir, "state.json", procfs.CPUStat{User: 200}); err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(target)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(data) != string(original) {
+		t.Fatal("writeStats modified the symlink target")
+	}
+	if _, cpu, err := readStats(dir, "state.json"); err != nil || cpu.User != 200 {
+		t.Fatalf("replacement state: cpu=%+v err=%v", cpu, err)
 	}
 }
