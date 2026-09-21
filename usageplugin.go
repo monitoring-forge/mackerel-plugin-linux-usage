@@ -7,21 +7,18 @@ import (
 	"time"
 
 	mp "github.com/mackerelio/go-mackerel-plugin"
+	"github.com/monitoring-forge/saferio"
 	"github.com/prometheus/procfs"
 )
 
 var tooOldDuration = 600.0 // seconds
 
-type LinuxUsagePlugin struct {
-	workDir string
-}
-
-func (u LinuxUsagePlugin) tempfilePath() string {
+func tempfilePath() string {
 	uid := os.Geteuid()
 	return fmt.Sprintf("mackerel-plugin-linux-usage-%d", uid)
 }
 
-func (u LinuxUsagePlugin) GraphDefinition() map[string]mp.Graphs {
+func (o *Opt) GraphDefinition() map[string]mp.Graphs {
 	return map[string]mp.Graphs{
 		"linux-usage.cpu": {
 			Label: "Linux CPU usage max 100%",
@@ -75,7 +72,7 @@ func (u LinuxUsagePlugin) GraphDefinition() map[string]mp.Graphs {
 	}
 }
 
-func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error) {
+func (o *Opt) gaugeMetrics(pf procfs.FS) (map[string]float64, error) {
 	res := map[string]float64{}
 	st, err := pf.Stat()
 	if err != nil {
@@ -117,7 +114,7 @@ func (u LinuxUsagePlugin) gaugeMetrics(pf procfs.FS) (map[string]float64, error)
 	return res, nil
 }
 
-func (u LinuxUsagePlugin) gaugeNetMetrics(pf procfs.FS) (map[string]float64, error) {
+func (o *Opt) gaugeNetMetrics(pf procfs.FS) (map[string]float64, error) {
 	res := map[string]float64{}
 	selffs, err := pf.Self()
 	if err != nil {
@@ -151,7 +148,7 @@ func minZero(a float64) float64 {
 	return max(a, 0)
 }
 
-func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
+func (o *Opt) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 	res := map[string]float64{}
 
 	cur, err := pf.Stat()
@@ -159,21 +156,21 @@ func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 		return res, err
 	}
 
-	path := u.tempfilePath()
+	path := tempfilePath()
 	curCPU := cur.CPUTotal
 
 	defer func() {
-		if writeErr := writeStats(u.workDir, path, curCPU); writeErr != nil {
+		if writeErr := writeStats(o.workDir, path, curCPU); writeErr != nil {
 			fmt.Fprintf(os.Stderr, "Error: failed to save stats to %s: %v\n", path, writeErr)
 		}
 	}()
 
-	if !fileExists(u.workDir, path) {
+	if !saferio.FileExists(o.workDir, path) {
 		fmt.Fprintf(os.Stderr, "Notice: first time execution command\n")
 		return res, nil
 	}
 
-	prevTime, prevCPU, err := readStats(u.workDir, path)
+	prevTime, prevCPU, err := readStats(o.workDir, path)
 	if err != nil {
 		return res, err
 	}
@@ -244,22 +241,22 @@ func (u LinuxUsagePlugin) cpuMetrics(pf procfs.FS) (map[string]float64, error) {
 	return res, nil
 }
 
-func (u LinuxUsagePlugin) FetchMetrics() (map[string]float64, error) {
+func (o *Opt) FetchMetrics() (map[string]float64, error) {
 	pf, err := procfs.NewDefaultFS()
 	if err != nil {
 		return nil, err
 	}
-	res, err := u.gaugeMetrics(pf)
+	res, err := o.gaugeMetrics(pf)
 	if err != nil {
 		return nil, err
 	}
 
-	net, err := u.gaugeNetMetrics(pf)
+	net, err := o.gaugeNetMetrics(pf)
 	if err != nil {
 		return nil, err
 	}
 
-	cpu, err := u.cpuMetrics(pf)
+	cpu, err := o.cpuMetrics(pf)
 	if err != nil {
 		return nil, err
 	}

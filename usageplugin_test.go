@@ -119,7 +119,7 @@ func TestGaugeMetrics(t *testing.T) {
 	buildProcfsTree(t, procDir)
 
 	// Set the workDir to the temporary directory
-	plugin := LinuxUsagePlugin{
+	o := &Opt{
 		workDir: tmpDir,
 	}
 
@@ -130,7 +130,7 @@ func TestGaugeMetrics(t *testing.T) {
 	}
 
 	// Call gaugeMetrics and check for errors
-	res, err := plugin.gaugeMetrics(pf)
+	res, err := o.gaugeMetrics(pf)
 	if err != nil {
 		t.Fatalf("gaugeMetrics failed: %v", err)
 	}
@@ -150,7 +150,7 @@ func TestGaugeNetMetrics(t *testing.T) {
 	tmpDir := t.TempDir()
 	procDir := filepath.Join(tmpDir, "proc")
 	buildProcfsTree(t, procDir)
-	plugin := LinuxUsagePlugin{
+	o := &Opt{
 		workDir: tmpDir,
 	}
 	// Create a procfs.FS instance pointing to the temporary procfs directory
@@ -158,7 +158,7 @@ func TestGaugeNetMetrics(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create procfs FS: %v", err)
 	}
-	res, err := plugin.gaugeNetMetrics(pf)
+	res, err := o.gaugeNetMetrics(pf)
 	if err != nil {
 		t.Fatalf("gaugeNetMetrics failed: %v", err)
 	}
@@ -202,10 +202,10 @@ softirq 6428505879 0 1343933345 732 1669274374 90025047 0 430534 0 6764 33248350
 		t.Fatalf("Failed to write /proc/stat: %v", err)
 	}
 
-	plugin := LinuxUsagePlugin{
+	o := &Opt{
 		workDir: tmpDir,
 	}
-	res, err := plugin.cpuMetrics(pf)
+	res, err := o.cpuMetrics(pf)
 	if err != nil {
 		t.Fatalf("cpuMetrics failed: %v", err)
 	}
@@ -228,7 +228,7 @@ softirq 6428709196 0 1343939038 732 1669293799 90025278 0 431563 0 6764 33250120
 		t.Fatalf("Failed to write /proc/stat for second execution: %v", err)
 	}
 
-	res2, err := plugin.cpuMetrics(pf)
+	res2, err := o.cpuMetrics(pf)
 	if err != nil {
 		t.Fatalf("cpuMetrics failed on second execution: %v", err)
 	}

@@ -1,14 +1,13 @@
 VERSION=0.1.2
-GITCOMMIT?=$(shell git describe --dirty --always)
-LDFLAGS=-ldflags "-w -s -X main.version=${VERSION} -X main.commit=${GITCOMMIT}"
+LDFLAGS=-ldflags "-w -s -X main.version=${VERSION}"
 all: mackerel-plugin-linux-usage
 
-.PHONY: mackerel-plugin-linux-usage
+.PHONY: mackerel-plugin-linux-usage linux check lint
 
-mackerel-plugin-linux-usage: main.go
+mackerel-plugin-linux-usage: *.go
 	go build $(LDFLAGS) -o mackerel-plugin-linux-usage
 
-linux: main.go
+linux: *.go
 	GOOS=linux GOARCH=amd64 go build $(LDFLAGS) -o mackerel-plugin-linux-usage
 
 check:
