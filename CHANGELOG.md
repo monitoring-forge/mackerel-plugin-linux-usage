@@ -1,5 +1,14 @@
 # Changelog
 
+## [v0.1.4](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.3...v0.1.4) - 2026-10-23
+
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/25
+- ci: bump Songmu/tagpr from 1.20.3 to 1.21.0 in the dependencies group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/26
+- Sync files with `monitoring-forge/github-common` by @monitoring-forge-files-sync-action[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/28
+- ci: bump Songmu/tagpr from 1.21.0 to 1.21.2 in the tagpr group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/30
+- go: bump the dependencies group with 2 updates by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/31
+- ci: bump Songmu/tagpr from 1.21.2 to 1.21.3 in the tagpr group by @dependabot[bot] in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/32
+
 ## [v0.1.3](https://github.com/monitoring-forge/mackerel-plugin-linux-usage/compare/v0.1.2...v0.1.3) - 2026-09-21
 
 - add lint and fix some issue by @kazeburo in https://github.com/monitoring-forge/mackerel-plugin-linux-usage/pull/11
