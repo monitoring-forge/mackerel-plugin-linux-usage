@@ -7,7 +7,7 @@ require (
 	github.com/mackerelio/golib v1.2.2
 	github.com/monitoring-forge/flagrun v0.0.10
 	github.com/monitoring-forge/saferio v0.0.3
-	github.com/prometheus/procfs v0.22.0
+	github.com/prometheus/procfs v0.23.0
 )
 
 require (
