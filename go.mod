@@ -6,7 +6,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin v0.1.6
 	github.com/mackerelio/golib v1.2.2
 	github.com/monitoring-forge/flagrun v0.0.11
-	github.com/monitoring-forge/saferio v0.0.3
+	github.com/monitoring-forge/saferio v0.0.4
 	github.com/prometheus/procfs v0.23.0
 )
 
