@@ -6,7 +6,7 @@ require (
 	github.com/mackerelio/go-mackerel-plugin v0.1.6
 	github.com/mackerelio/golib v1.2.2
 	github.com/monitoring-forge/flagrun v0.0.11
-	github.com/monitoring-forge/saferio v0.0.3
+	github.com/monitoring-forge/saferio v0.0.4
 	github.com/prometheus/procfs v0.23.0
 )
 
@@ -14,6 +14,6 @@ require (
 	github.com/dustin/go-humanize v1.1.0 // indirect
 	github.com/jessevdk/go-flags v1.6.1 // indirect
 	github.com/mackerelio/checkers v0.2.1 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 )
